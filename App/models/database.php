@@ -6,12 +6,15 @@ namespace models;
 
 class database
 {
-    public function __construct()
+    public function connect()
     {
-        $db = new \PDO('mysql:dbname='.DB_NAME.';host='.DB_HOST, DB_USER, DB_PASS);
-        $db->prepare('SELECT * FROM `users`');
+        try {
+            $opcoes = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
+            $db = new \PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_HOST, DB_USER, DB_PASS, $opcoes);
+            return $db;
 
-      //  return $db;
-
+        }catch (\PDOException $e){
+            echo $e->getMessage();
+        }
     }
 }

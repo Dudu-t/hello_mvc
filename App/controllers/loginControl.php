@@ -8,16 +8,24 @@ class loginControl
 
         new views\loginPage();
 
-        if (isset($_POST)) {
+        if (count($_POST) > 0) {
             $this->authLogin();
         }
     }
 
     private function authLogin()
     {
-        $usuario = filter_input(INPUT_POST, 'usuario',  FILTER_SANITIZE_STRING);
-        $senha = md5(filter_input(INPUT_POST, 'senha',  FILTER_SANITIZE_STRING));
-        $login = new models\usuario();
-        $login->authUser($usuario, $senha);
+        if (isset($_POST['usuario'])) {
+            $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_STRING);
+            $senha = filter_input(INPUT_POST, 'senha', FILTER_SANITIZE_STRING);
+            $login = new models\usuario();
+            $login = $login->authUser($usuario, $senha);
+            if ($login !== 0) {
+                $_SESSION['usuario'] = $login;
+                echo "<script>window.location.href = '/'</script>";
+            } else {
+                echo "Usuário ou senha inválido.";
+            }
+        }
     }
 }

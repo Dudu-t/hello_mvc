@@ -4,28 +4,43 @@ namespace views;
 
 class homePage
 {
-    private $dataPage;
-    private $basicInfo;
-    private $pagina;
 
-    private function pageData($buffer)
+    private $conteudo;
+    private $row;
+    private function editPage()
     {
         //continua...
 
-        $buffer = str_replace('{page_conteudo}', 'oranges', $buffer);
-        $buffer = str_replace('{page_title}', 'teste', $buffer);
+        $pageData = [
+            'titulo'=>['page_title', 'Home'],
+            'conteudo'=>['page_conteudo',$this->row],
+            'homeLink'=>['home_href', '#'],
+            'active'=>['home_active', 'active']
+        ];
+        array_walk($pageData, function ($key){
+           $var = '{'.$key[0].'}';
+           $valor = $key[1];
+            $this->conteudo = str_replace($var, $valor,  $this->conteudo);
+        });
+        echo $this->conteudo;
 
-        return $buffer;
     }
-
-    public function __construct()
-    {
+    private function loadHtml(){
+        ob_start();
+        require_once 'App/vendor/template/home.html';
+        $home = ob_get_contents();
+        $this->row = $home;
+        ob_end_clean();
         ob_start();
         require_once 'App/vendor/template/index.html';
         $buffer = ob_get_contents();
-        $buffer = $this->pageData($buffer);
-        $this->pagina = $buffer;
+        $this->conteudo = $buffer;
         ob_end_clean();
-        echo $buffer;
+        $this->editPage();
+    }
+    public function __construct()
+    {
+        $this->loadHtml();
+
     }
 }

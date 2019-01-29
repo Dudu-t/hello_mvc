@@ -2,6 +2,7 @@
 
 class Dispatcher
 {
+
     private $routes;
     private $url;
 
@@ -16,13 +17,17 @@ class Dispatcher
 
     private function dispatcher()
     {
+
         $this->getUrl();
+        if (!isset($_SESSION['usuario']) && $this->url !== '/login') {
+            echo '<script>window.location.href = "login/";</script>';
+        }
+        if (isset($_SESSION['usuario']) && $this->url == '/login') {
+            echo '<script>window.location.href = "/";</script>';
+        }
         //Percorre o array com as rotas
         array_walk($this->routes, function ($rota) {
-            if (!isset($_SESSION['usuario']) && $this->url !== '/login') {
-                echo '<script>window.location.href = "login/";</script>';
-            }
-            if ($rota['route'] == $this->url) {
+            if ($rota['route'] == $this->url || $this->url == '/') {
                 $controller = $rota['controller'];
                 $action = $rota['action'];
                 $endereco = "App/controllers/$controller.php";
@@ -36,6 +41,7 @@ class Dispatcher
             } else {
                 header('HTTP/1.1 404 Not Found');
             }
+
         });
 
         return 0;
